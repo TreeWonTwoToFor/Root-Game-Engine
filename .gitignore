@@ -1,0 +1,8 @@
+# saved media from the game
+screenshot.png
+out.mp4
+test_texture.bmp
+
+# pycache folders
+Engine/__pycache__/
+Logic/__pycache__/
