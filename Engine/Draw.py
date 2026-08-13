@@ -10,11 +10,7 @@ from Engine import Rasterizer
 frustum_planes = None
 camera_pos = None
 
-culling_coloring = False
-frustum_culling = True
-back_culling = True
-lighting = True
-homemade_rasterizer = True
+culling_coloring, frustum_culling, back_culling, lighting, homemade_rasterizer = False, False, False, False, False
 
 # 'main' funtion of draw
 def draw_frame_poly(screen, depth_buffer, camera, obj_list, light_list, debug, clock):
