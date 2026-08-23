@@ -23,6 +23,12 @@ frame_count       = settings[5]
 mouse_control     = settings[6]
 mouse_sensitivity = settings[7]
 
+Draw.culling_coloring    = settings[8]
+Draw.frustum_culling     = settings[9]
+Draw.back_culling        = settings[10]
+Draw.lighting            = settings[11]
+Draw.homemade_rasterizer = settings[12]
+
 # title the pygame window
 clean_title = ""
 split_title = scene_name.split('.')[0].split('_')
