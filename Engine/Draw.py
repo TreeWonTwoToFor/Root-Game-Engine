@@ -14,7 +14,7 @@ culling_coloring = False
 frustum_culling = True
 back_culling = True
 lighting = True
-homemade_rasterizer = True
+homemade_rasterizer = False
 
 # 'main' funtion of draw
 def draw_frame_poly(screen, depth_buffer, camera, obj_list, light_list, debug, clock):
@@ -38,11 +38,11 @@ def draw_polygons(screen, depth_buffer, camera, obj_list, light_list):
     # FIXME something about the frustum culling isn't properly aligned with the camera view
     #culled_obj_list = frustum_culling(obj_list)
     culled_obj_list = obj_list
-    for obj in culled_obj_list:
-        poly_list = obj.model
-        if not homemade_rasterizer:
-            # Painter's Algorithm
-            poly_list = sort_polygons(camera, poly_list, obj.is_local)
+    if not homemade_rasterizer:
+        poly_list = []
+        for obj in culled_obj_list:
+            poly_list = poly_list + obj.model
+        poly_list = sort_polygons(camera, poly_list, False)
         for poly in poly_list:
             direction_vector = [
                 camera.point[0] - poly[0][0][0],
@@ -63,6 +63,32 @@ def draw_polygons(screen, depth_buffer, camera, obj_list, light_list):
                 screen, screen_buffer, screen_size, depth_buffer, 
                 obj, light_value
             )
+    else:
+        for obj in culled_obj_list:
+            poly_list = obj.model
+            if not homemade_rasterizer:
+                # Painter's Algorithm
+                poly_list = sort_polygons(camera, poly_list, obj.is_local)
+            for poly in poly_list:
+                direction_vector = [
+                    camera.point[0] - poly[0][0][0],
+                    camera.point[1] - poly[0][0][1],
+                    camera.point[2] - poly[0][0][2]]
+                # back culling
+                if not obj.is_local and back_culling and Helper.array_dp(direction_vector, poly[1]) < 0:
+                    continue
+                # lighting
+                if lighting:
+                    light_value = calculate_lighting(poly, light_list)
+                else:
+                    light_value = 1
+                # draw polygons onto the screen
+                rasterize(
+                    poly, 
+                    camera, 
+                    screen, screen_buffer, screen_size, depth_buffer, 
+                    obj, light_value
+                )
 
 def sort_polygons(camera, poly_list, in_local_space, offset=(0,0,0)):
     output_list = []
