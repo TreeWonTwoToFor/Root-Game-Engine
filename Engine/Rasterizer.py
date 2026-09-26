@@ -1,16 +1,21 @@
+import pygame
 from PIL import Image
 
-def load_texture(file_name):
-    try:
-        img = Image.open(file_name)
-    except:
-        img = Image.open("./Assets/Objects/missing_texture.bmp")
-    return (img.size, list(img.getdata()))
+# TODO: make an option for animated textures through multiple image files
+def load_texture(texture):
+    if type(texture) == str:
+        try:
+            img = Image.open(texture)
+        except:
+            img = Image.open("./Assets/Objects/missing_texture.bmp")
+        return (False, img.size, list(img.getdata()))
+    elif type(texture) == pygame.Surface:
+        return (True, texture.get_size(), texture)
 
 # buffer refers to the memoryview object of the pygame surface buffer
 def draw_polygon(buffer, screen_size, depth_buffer, points, texture, light_val):
     width, height = screen_size[0], screen_size[1]
-    tex_size, tex_data = texture
+    is_surface, tex_size, tex_data = texture
     tex_w, tex_h = tex_size
     # unpack triangle
     (x0, y0, z0, u0, v0) = points[0]
@@ -82,7 +87,10 @@ def draw_polygon(buffer, screen_size, depth_buffer, points, texture, light_val):
                 if (0 <= px < tex_w and 0 <= py < tex_h) and (z < depth_buffer[idx_buf]):
                     # write into both of the buffers
                     idx_tex = py * tex_w + px
-                    r, g, b = tex_data[idx_tex][0:3]
+                    if is_surface:
+                        r, g, b, _ = tuple(tex_data.get_at((idx_tex%tex_w, idx_tex//tex_w)))
+                    else:
+                        r, g, b = tex_data[idx_tex][0:3]
                     r = int(r * light_val)
                     g = int(g * light_val)
                     b = int(b * light_val)

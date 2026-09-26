@@ -1,4 +1,5 @@
 import math
+import pygame
 
 from Engine import Object
 from Engine import Camera

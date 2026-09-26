@@ -79,6 +79,9 @@ class Object:
         cp = self.center_point
         self.translate([-cp[0], -cp[1], -cp[2]])
 
+    def load_texture(self, texture):
+        self.texture = Rasterizer.load_texture(texture)
+
 
 def remove_reference(model):
     new_model = []
